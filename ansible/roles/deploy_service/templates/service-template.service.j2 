@@ -1,0 +1,14 @@
+[Unit]
+Description={{ service_name }} service
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStart=/usr/bin/docker run --rm \
+  --name {{ service_name }} \
+  {{ docker_image }}:{{ docker_version }}
+Restart=always
+ExecStop=/usr/bin/docker stop {{ service_name }}
+
+[Install]
+WantedBy=multi-user.target

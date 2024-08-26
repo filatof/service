@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: yes
+  vars:
+    service_name: "my_service"  # Имя сервиса
+    docker_image: "my_docker_image"  # Имя Docker-образа
+    docker_version: "latest"  # Версия Docker-образа
+
+  roles:
+    - deploy_service
