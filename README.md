@@ -7,13 +7,11 @@
 ## Использование
 
 1. Убедитесь, что у вас установлен Ansible.
-2. Отредактируйте `playbook.yml`, чтобы указать имя вашего сервиса, Docker-образа и нужную версию.
-
-    repo_dest: /opt/skillbox-diploma   # Директория куда скачается репозиторий
-    docker_image_name: "skillbox/app"  # Название имиджа
-    docker_image_version: "latest"     # Здесь указываем версию
-    service_name: "my-service"         # Название сервиса
-    
+2. Отредактируйте `playbook.yml`, чтобы указать имя вашего сервиса, Docker-образа и нужную версию.  
+    repo_dest: /opt/skillbox-diploma   # Директория куда скачается репозиторий  
+    docker_image_name: "skillbox/app"  # Название имиджа  
+    docker_image_version: "latest"     # Здесь указываем версию  
+    service_name: "my-service"         # Название сервиса  
 3. Запустите плейбук:
 
    ```bash
