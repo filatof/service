@@ -4,10 +4,8 @@ After=docker.service
 Requires=docker.service
 
 [Service]
-ExecStart=/usr/bin/docker run --rm \
-  --name {{ service_name }} \
-  {{ docker_image }}:{{ docker_version }}
 Restart=always
+ExecStart=/usr/bin/docker run --rm --name {{ service_name }} -p 8080:8080 {{ docker_image_name }}:{{ docker_image_version }}
 ExecStop=/usr/bin/docker stop {{ service_name }}
 
 [Install]

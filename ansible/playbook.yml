@@ -1,10 +1,72 @@
 ---
-- hosts: all
+- name: Deploy service and build image
+  hosts: all
   become: yes
-  vars:
-    service_name: "my_service"  # Имя сервиса
-    docker_image: "my_docker_image"  # Имя Docker-образа
-    docker_version: "latest"  # Версия Docker-образа
 
-  roles:
-    - deploy_service
+  vars:
+    repo_url: "https://github.com/bhavenger/skillbox-diploma.git"
+    repo_dest: "/opt/skillbox-diploma"
+    docker_image_name: "skillbox/app"
+    docker_image_version: "latest"
+    service_name: "my-service"
+
+  tasks:
+    # - name: Install dependes for Docker
+    #   apt:
+    #     name:
+    #       - apt-transport-https
+    #       - ca-certificates
+    #       - curl
+    #       - software-properties-common
+    #     state: present
+
+    # - name: Add Docker GPG key
+    #   apt_key:
+    #     url: https://download.docker.com/linux/ubuntu/gpg
+    #     state: present
+
+    # - name: Add Docker repository
+    #   apt_repository:
+    #     repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    #     state: present
+
+    # - name: Install Docker 
+    #   apt:
+    #     name:
+    #       - docker-ce
+    #       - docker-ce-cli
+    #       - containerd.io
+    #     state: present
+
+    - name: Repo clone on server
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ repo_dest }}"
+        version: main
+      notify: Build_docker_image
+
+    - name: Create unit-file for systemd
+      template:
+        src: my-service.service.j2
+        dest: "/etc/systemd/system/{{ service_name }}.service"
+        mode: '0644'
+
+    - name: Daemon reload systemd 
+      systemd:
+        daemon_reload: yes
+
+    - name: Enableb service and start
+      systemd:
+        name: "{{ service_name }}"
+        enabled: yes
+        state: started
+      notify: Restart_docker_service
+
+  handlers:
+    - name: Build_docker_image
+      command: "docker build -t '{{ docker_image_name }}:{{ docker_image_version }}' {{ repo_dest }}"
+
+    - name: Restart_docker_service
+      systemd:
+        name: "{{ service_name }}"
+        state: restarted
